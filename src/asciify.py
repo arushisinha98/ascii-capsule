@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""
+Asciify - ASCII Art Image Converter
+
+Command-line tool to convert images to ASCII art.
+
+Usage:
+    asciify IMAGE.png --size 80
+    asciify IMAGE.png --save-txt output.txt
+    asciify IMAGE.png --save-html output.html
+    asciify IMAGE.png --size 50 --save-html output/ascii.html
+
+Author: ASCII Art Converter
+"""
+
+import argparse
+import sys
+from pathlib import Path
+from ascii_converter import ASCIIConverter
+from ascii_output import ASCIIOutputHandler
+
+
+def parse_arguments():
+    """
+    Parse command-line arguments.
+    
+    Returns:
+        Parsed arguments object
+    """
+    parser = argparse.ArgumentParser(
+        description='Convert images to ASCII art',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s image.png --size 80
+  %(prog)s photo.jpg --save-html output.html
+  %(prog)s picture.png --size 50 --save-txt result.txt
+  %(prog)s image.png --save-html output/image.html
+        """
+    )
+    
+    parser.add_argument(
+        'image',
+        help='Path to input image (JPEG, PNG, WEBP, TIFF)'
+    )
+    
+    parser.add_argument(
+        '--size',
+        type=int,
+        default=None,
+        help='Output width in characters (8-80, default: 80)'
+    )
+    
+    parser.add_argument(
+        '--save-txt',
+        dest='save_txt',
+        metavar='FILEPATH',
+        help='Save ASCII art as text file to specified path'
+    )
+    
+    parser.add_argument(
+        '--save-html',
+        dest='save_html',
+        metavar='FILEPATH',
+        help='Save ASCII art as HTML file to specified path'
+    )
+    
+    parser.add_argument(
+        '--extended',
+        action='store_true',
+        help='Use extended character set for more detail'
+    )
+    
+    parser.add_argument(
+        '--contrast',
+        type=float,
+        default=1.0,
+        help='Contrast enhancement factor (default: 1.0, no enhancement)'
+    )
+    
+    return parser.parse_args()
+
+
+def main():
+    """
+    Main entry point for the CLI application.
+    """
+    # Parse command-line arguments
+    args = parse_arguments()
+    
+    try:
+        # Initialize converter
+        converter = ASCIIConverter(use_extended=args.extended)
+        
+        # Convert image to ASCII art
+        print(f"Converting {args.image}...", file=sys.stderr)
+        ascii_art = converter.convert_image_to_ascii(args.image, args.size)
+        
+        # Determine size used
+        size_used = converter.clamp_size(args.size)
+        print(f"Size: {size_used} characters wide", file=sys.stderr)
+        
+        # Initialize output handler
+        output_handler = ASCIIOutputHandler()
+        
+        # Save to file(s) if requested
+        saved_files = []
+        
+        if args.save_txt:
+            output_handler.save_as_text(ascii_art, args.save_txt)
+            saved_files.append(args.save_txt)
+            print(f"Saved as text: {args.save_txt}", file=sys.stderr)
+        
+        if args.save_html:
+            image_name = Path(args.image).stem
+            output_handler.save_as_html(ascii_art, args.save_html, title=f"ASCII Art - {image_name}")
+            saved_files.append(args.save_html)
+            print(f"Saved as HTML: {args.save_html}", file=sys.stderr)
+        
+        # Display ASCII art to console if not saving to files
+        if not saved_files:
+            print(ascii_art)
+        else:
+            print(f"\nASCII art saved to: {', '.join(saved_files)}", file=sys.stderr)
+            print("\nPreview:", file=sys.stderr)
+            # Show first few lines as preview
+            preview_lines = ascii_art.split('\n')[:10]
+            for line in preview_lines:
+                print(line)
+            if len(ascii_art.split('\n')) > 10:
+                print("...")
+    
+    except FileNotFoundError as e:
+        print(f"Error: {str(e)}", file=sys.stderr)
+        sys.exit(1)
+    
+    except ValueError as e:
+        print(f"Error: {str(e)}", file=sys.stderr)
+        sys.exit(1)
+    
+    except IOError as e:
+        print(f"Error: {str(e)}", file=sys.stderr)
+        sys.exit(1)
+    
+    except KeyboardInterrupt:
+        print("\nOperation cancelled by user", file=sys.stderr)
+        sys.exit(130)
+    
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
