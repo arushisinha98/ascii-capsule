@@ -61,13 +61,13 @@ def create_test_images(directory):
 
 
 
-def run_test(description, command, cwd=None):
+def run_test(description, command, cwd=None, env=None):
     """Run a test command and display results, capturing output for debugging."""
     print(f"\n{'='*60}")
     print(f"Test: {description}")
     print(f"Command: {command}")
     print(f"{'='*60}")
-    result = subprocess.run(command, shell=True, cwd=cwd, capture_output=True, text=True)
+    result = subprocess.run(command, shell=True, cwd=cwd, env=env, capture_output=True, text=True)
     print("[STDOUT]\n" + (result.stdout or ""))
     print("[STDERR]\n" + (result.stderr or ""))
     if result.returncode == 0:
@@ -93,38 +93,42 @@ def temp_test_dir():
 @pytest.mark.order(1)
 def test_ascii_art_converter(temp_test_dir):
     """Run all tests in a temp directory, ensuring cleanup."""
-    # Copy all required source files into temp dir for subprocess calls
-    import shutil as _shutil
-    src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'))
-    for fname in ['asciify.py', 'ascii_converter.py', 'ascii_output.py']:
-        _shutil.copy(os.path.join(src_dir, fname), temp_test_dir)
-    # Create test images
+    # Create test images in temp dir
     create_test_images(temp_test_dir)
+
+    # Path to asciify.py in project root
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    asciify_path = os.path.join(project_root, 'asciify.py')
+
+    # Set PYTHONPATH to project root so 'src' is importable as a package
+    env = os.environ.copy()
+    env['PYTHONPATH'] = project_root
+
     # Test cases
     tests = [
         ("Basic conversion (default size)",
-         f"python asciify.py test_gradient.png"),
+         f"python {asciify_path} test_gradient.png"),
         ("Custom size (50 characters)",
-         f"python asciify.py test_circle.png --size 50"),
+         f"python {asciify_path} test_circle.png --size 50"),
         ("Size clamping (too small)",
-         f"python asciify.py test_text.png --size 5"),
+         f"python {asciify_path} test_text.png --size 5"),
         ("Size clamping (too large)",
-         f"python asciify.py test_text.png --size 100"),
+         f"python {asciify_path} test_text.png --size 100"),
         ("Save as text file",
-         f"python asciify.py test_gradient.png --save-txt output_test.txt"),
+         f"python {asciify_path} test_gradient.png --save-txt output_test.txt"),
         ("Save as HTML file",
-         f"python asciify.py test_circle.png --save-html output_test.html"),
+         f"python {asciify_path} test_circle.png --save-html output_test.html"),
         ("Save to subdirectory (auto-create)",
-         f"python asciify.py test_landscape.png --save-html test_output/landscape.html"),
+         f"python {asciify_path} test_landscape.png --save-html test_output/landscape.html"),
         ("Combined options (size + save)",
-         f"python asciify.py test_checkerboard.png --size 40 --save-txt test_output/checkerboard.txt"),
+         f"python {asciify_path} test_checkerboard.png --size 40 --save-txt test_output/checkerboard.txt"),
         ("Extended character set",
-         f"python asciify.py test_text.png --size 60 --extended"),
+         f"python {asciify_path} test_text.png --size 60 --extended"),
     ]
     passed = 0
     failed = 0
     for description, command in tests:
-        if run_test(description, command, cwd=temp_test_dir):
+        if run_test(description, command, cwd=temp_test_dir, env=env):
             passed += 1
         else:
             failed += 1
