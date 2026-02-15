@@ -70,7 +70,7 @@ class ASCIIOutputHandler:
     <style>
         body {{
             background-color: #000000;
-            color: #ffffff;
+            color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
             padding: 20px;
             margin: 0;
