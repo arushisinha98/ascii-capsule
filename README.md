@@ -180,11 +180,8 @@ This project is provided as-is for educational and personal use.
 ## Contributing
 
 Contributions are welcome! Areas for improvement:
-- Color ASCII art support
-- Animation support for videos
 - Custom character set configuration
 - Batch processing multiple images
-- Interactive preview mode
 
 ## Acknowledgments
 
