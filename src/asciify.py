@@ -93,12 +93,7 @@ def main():
         converter = ASCIIConverter(use_extended=args.extended)
         
         # Convert image to ASCII art
-        print(f"Converting {args.image}...", file=sys.stderr)
         ascii_art = converter.convert_image_to_ascii(args.image, args.size)
-        
-        # Determine size used
-        size_used = converter.clamp_size(args.size)
-        print(f"Size: {size_used} characters wide", file=sys.stderr)
         
         # Initialize output handler
         output_handler = ASCIIOutputHandler()
@@ -120,15 +115,6 @@ def main():
         # Display ASCII art to console if not saving to files
         if not saved_files:
             print(ascii_art)
-        else:
-            print(f"\nASCII art saved to: {', '.join(saved_files)}", file=sys.stderr)
-            print("\nPreview:", file=sys.stderr)
-            # Show first few lines as preview
-            preview_lines = ascii_art.split('\n')[:10]
-            for line in preview_lines:
-                print(line)
-            if len(ascii_art.split('\n')) > 10:
-                print("...")
     
     except FileNotFoundError as e:
         print(f"Error: {str(e)}", file=sys.stderr)
