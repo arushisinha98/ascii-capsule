@@ -178,21 +178,3 @@ class ASCIIConverter:
         ascii_art = self.pixels_to_ascii(img)
         
         return ascii_art
-    
-    def enhance_contrast(self, img: Image.Image, factor: float = 1.5) -> Image.Image:
-        """
-        Enhance image contrast for better ASCII representation.
-        
-        This is optional but can improve the visual quality of ASCII art
-        by making light and dark areas more distinct.
-        
-        Args:
-            img: PIL Image object
-            factor: Contrast enhancement factor (>1 increases contrast)
-            
-        Returns:
-            Contrast-enhanced PIL Image object
-        """
-        from PIL import ImageEnhance
-        enhancer = ImageEnhance.Contrast(img)
-        return enhancer.enhance(factor)
