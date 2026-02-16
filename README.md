@@ -22,7 +22,7 @@ A command-line tool to convert images into ASCII art with multiple output format
 
 ```bash
 # Install dependencies
-pixi init
+pixi install
 ```
 
 ## Usage
