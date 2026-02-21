@@ -21,6 +21,9 @@ class ASCIIConverter:
     
     # ASCII characters ordered from darkest to lightest based on visual density
     ASCII_CHARS = "@%#*+=-:. "
+
+    # Extended ASCII characters
+    EXTENDED_CHARS = ASCII_CHARS
     
     def __init__(self, use_extended: bool = False):
         """
@@ -29,7 +32,10 @@ class ASCIIConverter:
         Args:
             use_extended: If True, uses extended character set for more detail
         """
-        self.chars = self.ASCII_CHARS
+        if use_extended:
+            self.chars = self.EXTENDED_CHARS
+        else:
+            self.chars = self.ASCII_CHARS
     
     def validate_image(self, image_path: str) -> bool:
         """
