@@ -9,7 +9,7 @@ A command-line tool to convert images into ASCII art with multiple output format
 - **Multiple Format Support**: JPEG, PNG, WEBP, TIFF
 - **Adjustable Size**: Control output width (8-80 characters)
 - **Multiple Output Formats**: Display in terminal, save as text, or save as HTML
-- **Character Density Mapping**: Uses visual density to create accurate representations
+- **Character Density Mapping**: Uses visual density to create representations
 
 ## Installation
 
