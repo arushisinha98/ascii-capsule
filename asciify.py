@@ -107,10 +107,12 @@ def main():
         # Convert image to ASCII art
         ascii_art = converter.convert_image_to_ascii(args.image, args.size)
         
+        # Conceal text if requested
+        if args.conceal:
+            ascii_art = conceal(ascii_art, args.conceal.replace('"\'', ''), difficulty=args.difficulty)
+        
         # Initialize output handler
         output_handler = ASCIIOutputHandler()
-        
-        # Save to file(s) if requested
         saved_files = []
         
         if args.save_txt:
@@ -120,16 +122,14 @@ def main():
         
         if args.save_html:
             image_name = Path(args.image).stem
-            output_handler.save_as_html(ascii_art, args.save_html, title=f"ASCII Art - {image_name}")
+            output_handler.save_as_html(ascii_art, args.save_html, title=f"{image_name}")
             saved_files.append(args.save_html)
             print(f"Saved as HTML: {args.save_html}", file=sys.stderr)
         
-        # Display ASCII art to console if not saving to files
+        # Display to console if not saving to files
         if not saved_files:
-            if args.conceal:
-                ascii_art = conceal(ascii_art, args.conceal.replace('"\'', ''), difficulty=args.difficulty)
             print(ascii_art)
-    
+
     except FileNotFoundError as e:
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(1)
