@@ -55,11 +55,11 @@ python asciify.py PATH-TO-IMAGE.jpg --size 60 --save-html PATH-TO-OUTPUT.html
 ### Advanced Options
 
 ```bash
-# Use extended character set for more detail
-python asciify.py image.png --extended
+# Specify your own character set
+python asciify.py image.png --charset "*:.  "
 
-# Adjust contrast enhancement (values > 1.0 increase contrast)
-python asciify.py image.png --contrast 1.5
+# Hide a message (defaults to hard)
+python asciify.py image.png --conceal "Hidden Message" --difficulty "hard"
 ```
 
 ## How It Works
@@ -87,7 +87,13 @@ Maps each pixel's brightness (0-255) to an ASCII character from the character se
 - Darker pixels → denser characters (e.g., @, #, %)
 - Lighter pixels → lighter characters (e.g., ., :, space)
 
-### 8. Output
+### 8. Text Concealing
+Conceals text inside ASCII art and maps visual density of character to difficulty level
+- Darker pixels → more difficult to find
+- Lighter pixels → easier to find
+Supports multi-line message and optimally positions text for visual continuity
+
+### 9. Output
 Displays the ASCII art or saves it to the specified format.
 
 ## Character Set
@@ -129,6 +135,11 @@ Saves ASCII art as an HTML file with:
    - Supports multiple output formats
    - Automatic directory creation
 
+3. **src/text_concealer.py**: Text concealing logic
+   - `conceal` function to conceal a hidden message
+   - Uses visual density to set difficulty (more dense = more difficult)
+   - Supports multiple lines and spaces in message
+
 3. **asciify.py**: CLI interface
    - Argument parsing
    - User interaction
@@ -159,9 +170,6 @@ Ensure your image is in JPEG, PNG, WEBP, or TIFF format.
 ### "Image file not found"
 Check that the file path is correct and the file exists.
 
-### Output looks distorted
-Try adjusting the size or using the `--extended` flag for more character options.
-
 ### Characters don't align properly
 Ensure your terminal or text editor is using a monospace font.
 
@@ -185,4 +193,4 @@ Contributions are welcome! Areas for improvement:
 
 ## Acknowledgments
 
-Inspired by the ascii-image-converter project and classic ASCII art traditions.
+Inspired by the ascii-image-converter project.

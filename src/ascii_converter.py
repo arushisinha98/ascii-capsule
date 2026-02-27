@@ -25,15 +25,15 @@ class ASCIIConverter:
     # Extended ASCII characters
     EXTENDED_CHARS = ASCII_CHARS
     
-    def __init__(self, use_extended: bool = False):
+    def __init__(self, charset: str = None):
         """
         Initialize the converter with character set choice.
         
         Args:
-            use_extended: If True, uses extended character set for more detail
+            charset: Character set string to use (None for default)
         """
-        if use_extended:
-            self.chars = self.EXTENDED_CHARS
+        if charset:
+            self.chars = charset
         else:
             self.chars = self.ASCII_CHARS
     

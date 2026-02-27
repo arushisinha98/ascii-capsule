@@ -9,6 +9,8 @@ Usage:
     asciify IMAGE.png --save-txt output.txt
     asciify IMAGE.png --save-html output.html
     asciify IMAGE.png --size 50 --save-html output/ascii.html
+    asciify IMAGE.png --charset "%*:. "
+    asciify IMAGE.png --conceal "Hidden Message" --difficulty hard
 
 Author: ASCII Art Converter
 """
@@ -16,7 +18,7 @@ Author: ASCII Art Converter
 import argparse
 import sys
 from pathlib import Path
-from src import ASCIIConverter, ASCIIOutputHandler
+from src import ASCIIConverter, ASCIIOutputHandler, conceal
 
 
 def parse_arguments():
@@ -35,6 +37,8 @@ Examples:
   %(prog)s photo.jpg --save-html output.html
   %(prog)s picture.png --size 50 --save-txt result.txt
   %(prog)s image.png --save-html output/image.html
+  %(prog)s image.png --charset "%*:. "
+  %(prog)s image.png --conceal "Hidden Message" --difficulty hard
         """
     )
     
@@ -65,16 +69,25 @@ Examples:
     )
     
     parser.add_argument(
-        '--extended',
-        action='store_true',
-        help='Use extended character set for more detail'
+        '--charset',
+        type=str,
+        default=None,
+        help='Character set in order of visual density (dark to light)'
     )
     
     parser.add_argument(
-        '--contrast',
-        type=float,
-        default=1.0,
-        help='Contrast enhancement factor (default: 1.0, no enhancement)'
+        '--conceal',
+        type=str,
+        default=None,
+        help='Conceal a message within the ASCII art'
+    )
+    
+    parser.add_argument(
+        '--difficulty',
+        type=str,
+        default="hard",
+        choices=["easy", "medium", "hard"],
+        help='Difficulty level for concealing text (default: hard)'
     )
     
     return parser.parse_args()
@@ -89,7 +102,7 @@ def main():
     
     try:
         # Initialize converter
-        converter = ASCIIConverter(use_extended=args.extended)
+        converter = ASCIIConverter(charset=args.charset.replace('"\'', '') if args.charset else None)
         
         # Convert image to ASCII art
         ascii_art = converter.convert_image_to_ascii(args.image, args.size)
@@ -113,6 +126,8 @@ def main():
         
         # Display ASCII art to console if not saving to files
         if not saved_files:
+            if args.conceal:
+                ascii_art = conceal(ascii_art, args.conceal.replace('"\'', ''), difficulty=args.difficulty)
             print(ascii_art)
     
     except FileNotFoundError as e:
