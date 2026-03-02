@@ -1,0 +1,60 @@
+==============================
+    Welcome, adventurer!
+==============================
+
+Inside this little device
+are memories waiting to be
+unlocked.
+
+Each memory is hidden behind
+a piece of ASCII art. Look
+carefully at the art — there
+is a secret code concealed
+within the characters.
+
+When you find it, enter the
+code to reveal the memory
+behind it.
+
+==============================
+         How to play
+==============================
+
+1. From the menu, pick an
+   item to view its art.
+
+2. Scroll through the ASCII
+   art (D-Pad to scroll,
+   L/R for page up/down).
+
+3. Look for letters or
+   numbers hidden among
+   the ASCII symbols.
+
+4. Press A to open the
+   keyboard and type the
+   code you found.
+
+5. If correct, the memory
+   is unlocked! Read it by
+   pressing X from the menu.
+
+==============================
+           Controls
+==============================
+
+ D-Pad   : Scroll content
+ L / R   : Page up / down
+ A       : Select / confirm
+ B       : Back / cancel
+ X       : Read memory
+           (from menu)
+ START   : Confirm / begin
+ SELECT  : Instructions
+
+==============================
+
+Good luck, and enjoy the
+memories!
+
+==============================

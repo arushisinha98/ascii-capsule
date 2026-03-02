@@ -1,0 +1,125 @@
+==============================
+  How to Extend This App
+==============================
+
+You can add your own ASCII
+art, hidden codes, and
+memories to this application!
+
+------------------------------
+  Step 1: Create ASCII Art
+------------------------------
+
+Use the asciify.py tool on
+your computer:
+
+  python asciify.py IMAGE.png
+    --size 80
+    --conceal "YOUR CODE"
+    --difficulty hard
+    --save-txt outputs/NAME.txt
+
+This creates ASCII art from
+your image with a hidden code
+embedded in the art.
+
+Parameters:
+  --size     : Width (8-80)
+  --conceal  : The code to hide
+  --difficulty: easy/medium/hard
+    easy   = code is visible
+    hard   = code blends in
+
+------------------------------
+  Step 2: Write a Letter
+------------------------------
+
+Create a text file with your
+memory or letter. Keep lines
+under 32 characters for the
+best reading experience on
+the DSi (no side-scrolling).
+
+Example (letters/MYITEM.txt):
+
+  Dear friend,
+
+  Remember that time we...
+
+  (your text here)
+
+------------------------------
+  Step 3: Add to Manifest
+------------------------------
+
+Edit nitrofiles/manifest.txt
+and add a new line:
+
+  Name|CODE|art.txt|letter.txt
+
+Example:
+  Sunset|SNST 42|SNST42.txt|SNST42.txt
+
+Fields (pipe-separated):
+  1. Display name (shown in
+     menu)
+  2. Hidden code (what user
+     must find and enter)
+  3. Art filename (in art/)
+  4. Letter filename (in
+     letters/)
+
+------------------------------
+  Step 4: Copy Files
+------------------------------
+
+Copy your files into the
+nitrofiles directory:
+
+  nitrofiles/art/SNST42.txt
+  nitrofiles/letters/SNST42.txt
+
+------------------------------
+  Step 5: Rebuild
+------------------------------
+
+On your computer, run:
+
+  cd dsi
+  make clean
+  make
+
+This produces a new .nds file
+with your content embedded.
+
+------------------------------
+  Step 6: Deploy
+------------------------------
+
+Copy the new ascii_memories.nds
+to your DSi SD card. Launch
+it from TWiLight Menu++.
+
+==============================
+         Tips
+==============================
+
+- Codes are case-insensitive
+  (user can type upper or
+  lower case)
+
+- Maximum 16 items supported
+  (edit MAX_ITEMS in
+  content.h to increase)
+
+- Art at 80 chars wide will
+  require horizontal
+  scrolling on the DSi.
+  Use --size 32 for art
+  that fits without scrolling.
+
+- Test with melonDS or
+  DeSmuME emulator before
+  deploying to hardware.
+
+==============================
