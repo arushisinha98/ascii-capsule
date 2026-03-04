@@ -16,7 +16,7 @@ include $(DEVKITARM)/ds_rules
 # DATA is a list of directories containing binary data
 # NITRODATA is the directory that will be embedded into the .nds via NitroFS
 #---------------------------------------------------------------------------------
-TARGET		:=	ascii_memories
+TARGET		:=	asciicapsule
 BUILD		:=	build
 SOURCES		:=	source
 INCLUDES	:=	include

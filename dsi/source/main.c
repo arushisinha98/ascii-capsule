@@ -1,5 +1,5 @@
 /**
- * main.c — ASCII Memories for Nintendo DSi
+ * main.c — ASCII Capsule for Nintendo DSi
  *
  * Entry point, state machine, and NDS-specific rendering.
  *
@@ -10,7 +10,8 @@
  *   CHALLENGE    → Scrollable ASCII art with hidden code
  *   CODE_ENTRY   → On-screen keyboard for code input
  *   WRONG_CODE   → Error screen, retry or go back
- *   LETTER       → Scrollable memory text (unlocked)
+ *   MESSAGE      → Scrollable memory text (unlocked)
+ *   FREE_ENTRY   → Code entry for bonus codes (no art)
  *   INSTRUCTIONS → How to extend the app
  */
 
@@ -31,7 +32,7 @@
 #define SPLASH_FRAMES    180      /* 3 seconds at 60 fps             */
 #define SCROLL_DELAY     15       /* key-repeat delay (frames)       */
 #define SCROLL_REPEAT    3        /* key-repeat interval (frames)    */
-#define SAVE_PATH        "fat:/ascii_memories_save.txt"
+#define SAVE_PATH        "fat:/ascii_capsule_save.txt"
 
 /* ================================================================== */
 /* Application states                                                  */
@@ -44,7 +45,8 @@ typedef enum {
     STATE_CHALLENGE,
     STATE_CODE_ENTRY,
     STATE_WRONG_CODE,
-    STATE_LETTER,
+    STATE_MESSAGE,
+    STATE_FREE_ENTRY,
     STATE_INSTRUCTIONS
 } AppState;
 
@@ -59,9 +61,11 @@ static AppState   state;
 static int        frame_count;
 static Content    content;
 static Viewer     viewer;
-static Keyboard   kbd;
+static CapsuleKeyboard   kbd;
 static int        menu_cursor;
 static int        selected_item;
+static int        matched_bonus;     /* index of last matched bonus  */
+static bool       free_entry_mode;   /* true when in free-entry flow */
 
 /* Tracks whether screens need redraw */
 static bool       top_dirty;
@@ -158,10 +162,20 @@ static void enter_state(AppState new_state) {
     case STATE_WRONG_CODE:
         break;
 
-    case STATE_LETTER:
-        snprintf(path, sizeof(path), "nitro:/letters/%s",
-                 content.items[selected_item].letter_file);
+    case STATE_MESSAGE:
+        if (free_entry_mode && matched_bonus >= 0) {
+            snprintf(path, sizeof(path), "nitro:/messages/%s",
+                     content.bonus[matched_bonus].message_file);
+        } else {
+            snprintf(path, sizeof(path), "nitro:/messages/%s",
+                     content.items[selected_item].message_file);
+        }
         viewer_load(&viewer, path);
+        break;
+
+    case STATE_FREE_ENTRY:
+        free_entry_mode = true;
+        keyboard_init(&kbd);
         break;
 
     case STATE_INSTRUCTIONS:
@@ -183,7 +197,7 @@ static void tick_splash(u16 kdown) {
     if (bot_dirty) {
         consoleSelect(&bot_con);
         iprintf("\x1b[8;3H======================");
-        iprintf("\x1b[10;5HASCII  MEMORIES");
+        iprintf("\x1b[10;5HASCII  CAPSULE");
         iprintf("\x1b[12;3H======================");
         iprintf("\x1b[16;8HLoading...");
         iprintf("\x1b[20;4HPress A to skip");
@@ -228,20 +242,34 @@ static void draw_menu(void) {
     /* Top screen: item list */
     consoleSelect(&top_con);
     consoleClear();
-    iprintf("\x1b[0;2H=== ASCII Memories ===\n\n");
+    iprintf("\x1b[0;2H=== ASCII Capsule ===\n\n");
     iprintf("  Select an item to view\n");
     iprintf("  its ASCII art and find\n");
     iprintf("  the hidden code!\n\n");
 
-    for (int i = 0; i < content.count && i < 14; i++) {
+    /* Total menu entries = regular items + 1 (Free Entry) */
+    int total = content.count + 1;
+
+    for (int i = 0; i < total && i < 14; i++) {
         if (i == menu_cursor)
             iprintf("  > ");
         else
             iprintf("    ");
 
-        iprintf("%-16s", content.items[i].name);
-        if (content.items[i].unlocked)
-            iprintf(" [*]");
+        if (i < content.count) {
+            iprintf("%-16s", content.items[i].name);
+            if (content.items[i].unlocked)
+                iprintf(" [*]");
+        } else {
+            /* Free Entry slot */
+            iprintf("%-16s", "Free Entry");
+            /* Show [*] if any bonus is unlocked */
+            int any = 0;
+            for (int b = 0; b < content.bonus_count; b++)
+                if (content.bonus[b].unlocked) any++;
+            if (any > 0)
+                iprintf(" [%d]", any);
+        }
         iprintf("\n");
     }
 
@@ -250,8 +278,8 @@ static void draw_menu(void) {
     consoleClear();
     iprintf("\x1b[0;2HControls:");
     iprintf("\x1b[2;0H  Up/Down : Navigate");
-    iprintf("\x1b[3;0H  A       : View art");
-    iprintf("\x1b[4;0H  X       : Read memory");
+    iprintf("\x1b[3;0H  A       : View art / enter");
+    iprintf("\x1b[4;0H  X       : Read message");
     iprintf("\x1b[5;0H            (if unlocked)");
     iprintf("\x1b[6;0H  SELECT  : Instructions");
 
@@ -261,26 +289,41 @@ static void draw_menu(void) {
             iprintf("\x1b[10;0H  Status: UNLOCKED");
         else
             iprintf("\x1b[10;0H  Status: LOCKED");
+    } else if (menu_cursor == content.count) {
+        iprintf("\x1b[9;0H  Item: Free Entry");
+        int unlocked_bonus = 0;
+        for (int b = 0; b < content.bonus_count; b++)
+            if (content.bonus[b].unlocked) unlocked_bonus++;
+        iprintf("\x1b[10;0H  Bonus: %d / %d",
+                unlocked_bonus, content.bonus_count);
+        iprintf("\x1b[12;0H  Enter codes found in");
+        iprintf("\x1b[13;0H  the real world!");
     }
 
     /* Unlock count */
     int unlocked = 0;
     for (int i = 0; i < content.count; i++)
         if (content.items[i].unlocked) unlocked++;
-    iprintf("\x1b[13;0H  Progress: %d / %d", unlocked, content.count);
+    int bonus_unlocked = 0;
+    for (int b = 0; b < content.bonus_count; b++)
+        if (content.bonus[b].unlocked) bonus_unlocked++;
+    iprintf("\x1b[16;0H  Art: %d / %d", unlocked, content.count);
+    iprintf("\x1b[17;0H  Bonus: %d / %d",
+            bonus_unlocked, content.bonus_count);
 }
 
 static void tick_menu(u16 kdown) {
     bool need_draw = bot_dirty;
+    int total = content.count + 1;  /* +1 for Free Entry */
 
     if (kdown & KEY_UP) {
         menu_cursor--;
-        if (menu_cursor < 0) menu_cursor = content.count - 1;
+        if (menu_cursor < 0) menu_cursor = total - 1;
         need_draw = true;
     }
     if (kdown & KEY_DOWN) {
         menu_cursor++;
-        if (menu_cursor >= content.count) menu_cursor = 0;
+        if (menu_cursor >= total) menu_cursor = 0;
         need_draw = true;
     }
 
@@ -290,13 +333,24 @@ static void tick_menu(u16 kdown) {
     }
 
     if (kdown & KEY_A) {
-        selected_item = menu_cursor;
-        enter_state(STATE_CHALLENGE);
+        if (menu_cursor < content.count) {
+            /* Regular item → view ASCII art */
+            selected_item = menu_cursor;
+            free_entry_mode = false;
+            enter_state(STATE_CHALLENGE);
+        } else {
+            /* Free Entry → go directly to code entry */
+            enter_state(STATE_FREE_ENTRY);
+        }
     }
 
-    if ((kdown & KEY_X) && content.items[menu_cursor].unlocked) {
-        selected_item = menu_cursor;
-        enter_state(STATE_LETTER);
+    if (kdown & KEY_X) {
+        if (menu_cursor < content.count &&
+            content.items[menu_cursor].unlocked) {
+            selected_item = menu_cursor;
+            free_entry_mode = false;
+            enter_state(STATE_MESSAGE);
+        }
     }
 
     if (kdown & KEY_SELECT) {
@@ -341,8 +395,8 @@ static void tick_challenge(u16 kdown, u16 krepeat) {
 /* ================================================================== */
 
 static void tick_code_entry(u16 kdown) {
-    /* Keep showing art on top for reference */
-    if (top_dirty) {
+    /* Keep showing art on top for reference (regular mode only) */
+    if (top_dirty && !free_entry_mode) {
         draw_viewer(&viewer, &top_con);
         top_dirty = false;
     }
@@ -360,7 +414,7 @@ static void tick_code_entry(u16 kdown) {
             /* Correct! */
             content.items[selected_item].unlocked = true;
             content_save_progress(&content, SAVE_PATH);
-            enter_state(STATE_LETTER);
+            enter_state(STATE_MESSAGE);
         } else {
             enter_state(STATE_WRONG_CODE);
         }
@@ -375,7 +429,7 @@ static void tick_code_entry(u16 kdown) {
 /* ================================================================== */
 
 static void tick_wrong_code(u16 kdown) {
-    if (top_dirty) {
+    if (top_dirty && !free_entry_mode) {
         draw_viewer(&viewer, &top_con);
         top_dirty = false;
     }
@@ -388,32 +442,45 @@ static void tick_wrong_code(u16 kdown) {
         iprintf("\x1b[12;2HThat's not it.");
         iprintf("\x1b[13;2HLook more carefully!");
         iprintf("\x1b[17;2H  A : Try again");
-        iprintf("\x1b[18;2H  B : Back to art");
+        if (free_entry_mode)
+            iprintf("\x1b[18;2H  B : Back to menu");
+        else
+            iprintf("\x1b[18;2H  B : Back to art");
         bot_dirty = false;
     }
 
     if (kdown & KEY_A) {
-        enter_state(STATE_CODE_ENTRY);
+        if (free_entry_mode)
+            enter_state(STATE_FREE_ENTRY);
+        else
+            enter_state(STATE_CODE_ENTRY);
     }
     if (kdown & KEY_B) {
-        enter_state(STATE_CHALLENGE);
+        if (free_entry_mode)
+            enter_state(STATE_MENU);
+        else
+            enter_state(STATE_CHALLENGE);
     }
 }
 
 /* ================================================================== */
-/* State: LETTER                                                       */
+/* State: MESSAGE                                                      */
 /* ================================================================== */
 
-static void tick_letter(u16 kdown, u16 krepeat) {
+static void tick_message(u16 kdown, u16 krepeat) {
     update_viewer_scroll(&viewer, kdown, krepeat);
     redraw_viewer_if_changed(&viewer, &top_con);
 
     if (bot_dirty) {
         consoleSelect(&bot_con);
-        iprintf("\x1b[0;2H** Memory Unlocked! **");
-        iprintf("\x1b[2;0HItem: %s",
-                content.items[selected_item].name);
-        iprintf("\x1b[4;0HRead the memory above.");
+        iprintf("\x1b[0;2H** Message Unlocked! **");
+        if (free_entry_mode) {
+            iprintf("\x1b[2;0HBonus code accepted!");
+        } else {
+            iprintf("\x1b[2;0HItem: %s",
+                    content.items[selected_item].name);
+        }
+        iprintf("\x1b[4;0HRead the message above.");
         iprintf("\x1b[6;0HControls:");
         iprintf("\x1b[7;0H  D-Pad : Scroll");
         iprintf("\x1b[8;0H  L / R : Page up/down");
@@ -422,6 +489,57 @@ static void tick_letter(u16 kdown, u16 krepeat) {
     }
 
     if (kdown & KEY_B) {
+        free_entry_mode = false;
+        enter_state(STATE_MENU);
+    }
+}
+
+/* ================================================================== */
+/* State: FREE_ENTRY                                                   */
+/* ================================================================== */
+
+static void tick_free_entry(u16 kdown) {
+    if (top_dirty) {
+        consoleSelect(&top_con);
+        consoleClear();
+        iprintf("\x1b[2;3H=== Free Entry ===");
+        iprintf("\x1b[5;0H  Enter a bonus code you");
+        iprintf("\x1b[6;0H  found in the real world.");
+        iprintf("\x1b[8;0H  These codes are NOT in");
+        iprintf("\x1b[9;0H  the ASCII art -- look");
+        iprintf("\x1b[10;0H around you!");
+        iprintf("\x1b[13;0H Bonus messages: %d / %d",
+                0, content.bonus_count);
+
+        int unlocked_bonus = 0;
+        for (int b = 0; b < content.bonus_count; b++)
+            if (content.bonus[b].unlocked) unlocked_bonus++;
+        iprintf("\x1b[13;0H  Unlocked: %d / %d",
+                unlocked_bonus, content.bonus_count);
+
+        top_dirty = false;
+    }
+
+    touchPosition touch;
+    touchRead(&touch);
+
+    int result = keyboard_update(&kbd, kdown, &touch);
+    keyboard_draw(&kbd, &bot_con);
+
+    if (result == 1) {
+        /* User pressed OK — check against all bonus codes */
+        matched_bonus = content_check_bonus_code(&content,
+                                                  keyboard_get_input(&kbd));
+        if (matched_bonus >= 0) {
+            content.bonus[matched_bonus].unlocked = true;
+            content_save_progress(&content, SAVE_PATH);
+            enter_state(STATE_MESSAGE);
+        } else {
+            enter_state(STATE_WRONG_CODE);
+        }
+    } else if (result == -1) {
+        /* User pressed cancel */
+        free_entry_mode = false;
         enter_state(STATE_MENU);
     }
 }
@@ -502,8 +620,10 @@ int main(void) {
 
     /* --- Initial state --- */
     viewer_init(&viewer);
-    menu_cursor   = 0;
-    selected_item = 0;
+    menu_cursor     = 0;
+    selected_item   = 0;
+    matched_bonus   = -1;
+    free_entry_mode = false;
     enter_state(STATE_SPLASH);
 
     /* ============================================================== */
@@ -523,7 +643,8 @@ int main(void) {
             case STATE_CHALLENGE:    tick_challenge(kdown, krepeat);  break;
             case STATE_CODE_ENTRY:   tick_code_entry(kdown);          break;
             case STATE_WRONG_CODE:   tick_wrong_code(kdown);          break;
-            case STATE_LETTER:       tick_letter(kdown, krepeat);     break;
+            case STATE_MESSAGE:      tick_message(kdown, krepeat);    break;
+            case STATE_FREE_ENTRY:   tick_free_entry(kdown);          break;
             case STATE_INSTRUCTIONS: tick_instructions(kdown, krepeat); break;
         }
     }

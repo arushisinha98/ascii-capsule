@@ -49,27 +49,27 @@ static int row_len(int row) {
 /* Public API                                                          */
 /* ------------------------------------------------------------------ */
 
-void keyboard_init(Keyboard* k) {
+void keyboard_init(CapsuleKeyboard* k) {
     memset(k->input, 0, sizeof(k->input));
     k->len     = 0;
     k->sel_row = 1;   /* start on QWERTY row */
     k->sel_col = 0;
 }
 
-static void kb_type_char(Keyboard* k, char ch) {
+static void kb_type_char(CapsuleKeyboard* k, char ch) {
     if (k->len < KB_MAX_INPUT) {
         k->input[k->len++] = ch;
         k->input[k->len]   = '\0';
     }
 }
 
-static void kb_delete_char(Keyboard* k) {
+static void kb_delete_char(CapsuleKeyboard* k) {
     if (k->len > 0) {
         k->input[--k->len] = '\0';
     }
 }
 
-int keyboard_update(Keyboard* k, u16 kdown, touchPosition* touch) {
+int keyboard_update(CapsuleKeyboard* k, u16 kdown, touchPosition* touch) {
 
     /* ----- D-pad navigation ----- */
     if (kdown & KEY_UP) {
@@ -152,7 +152,7 @@ int keyboard_update(Keyboard* k, u16 kdown, touchPosition* touch) {
     return 0;
 }
 
-void keyboard_draw(const Keyboard* k, PrintConsole* con) {
+void keyboard_draw(const CapsuleKeyboard* k, PrintConsole* con) {
     consoleSelect(con);
     consoleClear();
 
@@ -198,6 +198,6 @@ void keyboard_draw(const Keyboard* k, PrintConsole* con) {
     iprintf("\x1b[%d;1HTap keys to type", sp_y + 4);
 }
 
-const char* keyboard_get_input(const Keyboard* k) {
+const char* keyboard_get_input(const CapsuleKeyboard* k) {
     return k->input;
 }

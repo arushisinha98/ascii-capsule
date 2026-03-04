@@ -18,12 +18,12 @@ typedef struct {
     int  len;                       /* current input length   */
     int  sel_row;                   /* selected key row       */
     int  sel_col;                   /* selected key column    */
-} Keyboard;
+} CapsuleKeyboard;
 
 /**
  * Initialize/reset the keyboard state.
  */
-void keyboard_init(Keyboard* k);
+void keyboard_init(CapsuleKeyboard* k);
 
 /**
  * Process one frame of keyboard input.
@@ -35,17 +35,17 @@ void keyboard_init(Keyboard* k);
  *         -1 = user cancelled (pressed B)
  *          0 = still editing
  */
-int keyboard_update(Keyboard* k, u16 kdown, touchPosition* touch);
+int keyboard_update(CapsuleKeyboard* k, u16 kdown, touchPosition* touch);
 
 /**
  * Draw the keyboard UI on the given console.
  * Overwrites the full bottom screen.
  */
-void keyboard_draw(const Keyboard* k, PrintConsole* con);
+void keyboard_draw(const CapsuleKeyboard* k, PrintConsole* con);
 
 /**
  * Get the current input string.
  */
-const char* keyboard_get_input(const Keyboard* k);
+const char* keyboard_get_input(const CapsuleKeyboard* k);
 
 #endif /* KEYBOARD_H */
