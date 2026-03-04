@@ -5,12 +5,9 @@
 # The hidden code is what's concealed in the ASCII art.
 # It is compared case-insensitively against user input.
 #
-Boot|2 SHOO|2SHOO.txt|2SHOO.txt
-Bay|BAY B|BAYB.txt|BAYB.txt
-Bread|BIG JO|BIGJO.txt|BIGJO.txt
-Sleeping Bag|C0ZY|C0ZY.txt|C0ZY.txt
-Chef Hat|CHEF HTN|CHEFHTN.txt|CHEFHTN.txt
-Dumpling|DMPL 93|DMPL93.txt|DMPL93.txt
-Hammock|HMCK 25|HMCK25.txt|HMCK25.txt
-Pickle|PCKL 57|PCKL57.txt|PCKL57.txt
-Tent|TNT 404|TNT404.txt|TNT404.txt
+HikingBoot|2SHOO|2SHOO.txt|2SHOO.txt
+Bread|BIGJO|BIGJO.txt|BIGJO.txt
+ChefHat|CHEFHTN|CHEFHTN.txt|CHEFHTN.txt
+Dumpling|DMPL93|DMPL93.txt|DMPL93.txt
+Pickle|PCKL57|PCKL57.txt|PCKL57.txt
+Tent|TNT404|TNT404.txt|TNT404.txt

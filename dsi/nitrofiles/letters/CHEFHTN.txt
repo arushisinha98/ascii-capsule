@@ -1,18 +1,27 @@
 ==============================
-       The Chef Hat
+    Cookbook
 ==============================
 
-[Replace this placeholder
-with your own memory!]
+It could be fun to make our
+own cookbook sometime.
+Thought I'd contribute some 
+names of chapters.
 
-A chef hat sits tall and
-proud. Someone was cooking
-something special.
+1. Lidl Ingredients, Michelin 
+Intentions (i.e. the budget 
+section)
 
-What was the dish? Who
-wore this hat? Was it
-a celebration?
+2. Effort was the Main 
+Ingredient (i.e. the I tried 
+really hard section)
 
-Write your memory here.
+3. I Wanted You to Think I 
+Was Interesting (i.e. the 
+hidden intention section)
+
+4. An Excellent Lamb Ragu 
+Amidst Other Mediocre Pastas 
+(yeah, we absolutely need a 
+pasta section)
 
 ==============================

@@ -4,15 +4,12 @@
       *  *  *  *  *  *  *  *
 
        A S C I I
-             M E M O R I E S
+             C A P S U L E
 
       *  *  *  *  *  *  *  *
         *  *  *  *  *  *  *
           *  *  *  *  *  *
 
 
-     A treasure hunt through
-       ASCII art images.
-
-     Find the hidden codes
-     to unlock your memories!
+     A treasure hunt with 
+     ASCII art and your DSi.

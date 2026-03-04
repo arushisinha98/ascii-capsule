@@ -37,9 +37,7 @@ if [[ -n "$REGEN_SIZE" ]]; then
     # Adjust these to match your content
     declare -A ITEMS=(
         ["boot.png"]="2SHOO|2 SHOO"
-        ["bay.jpg"]="BAYB|BAY B"
         ["bread.jpg"]="BIGJO|BIG JO"
-        ["sleepingbag.png"]="C0ZY|C0ZY"
         ["chefhat.webp"]="CHEFHTN|CHEF HTN"
         ["dumpling.png"]="DMPL93|DMPL 93"
         ["hammock.jpg"]="HMCK25|HMCK 25"
@@ -90,4 +88,4 @@ echo ""
 echo "Next steps:"
 echo "  1. Edit letter files in: $DSI_DIR/nitrofiles/letters/"
 echo "  2. Update manifest:      $DSI_DIR/nitrofiles/manifest.txt"
-echo "  3. Build:                 cd $DSI_DIR && make"
+echo "  3. Build:                cd $DSI_DIR && make"

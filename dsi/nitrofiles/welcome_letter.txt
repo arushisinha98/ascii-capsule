@@ -1,43 +1,39 @@
 ==============================
-    Welcome, adventurer!
+    If you can read this,
+    IT WORKS (so far)
+    And I'm mighty proud.
 ==============================
 
-Inside this little device
-are memories waiting to be
-unlocked.
+It's the week before your 
+birthday and
 
-Each memory is hidden behind
-a piece of ASCII art. Look
-carefully at the art — there
-is a secret code concealed
-within the characters.
+... it's 4AM ...
 
-When you find it, enter the
-code to reveal the memory
-behind it.
+so obviously I had to do 
+something characteristically 
+unconventional.
+
+My hope is that the geek in 
+you is going to get a laugh 
+out of this. And at some 
+point, you can add some Hugo 
+spice to my pizzazz and make 
+this better. I feel v1.0 is 
+cute but she's lacking some 
+creativity.
 
 ==============================
          How to play
 ==============================
 
-1. From the menu, pick an
-   item to view its art.
+Pick an item. Find the code.
+Type it in. Unlock something.
 
-2. Scroll through the ASCII
-   art (D-Pad to scroll,
-   L/R for page up/down).
-
-3. Look for letters or
-   numbers hidden among
-   the ASCII symbols.
-
-4. Press A to open the
-   keyboard and type the
-   code you found.
-
-5. If correct, the memory
-   is unlocked! Read it by
-   pressing X from the menu.
+If you are astute and if I did 
+this right, some nonsense or 
+my unfiltered 4AM thoughts 
+will be waiting for you back 
+on the menu page.
 
 ==============================
            Controls
@@ -45,16 +41,39 @@ behind it.
 
  D-Pad   : Scroll content
  L / R   : Page up / down
- A       : Select / confirm
+ A       : Open keyboard
+           Select / confirm
  B       : Back / cancel
- X       : Read memory
+ X       : Read the message
            (from menu)
  START   : Confirm / begin
  SELECT  : Instructions
 
 ==============================
 
-Good luck, and enjoy the
-memories!
+Oh and if you find anything 
+aroudn your house with this 
+logo.
+
+
+  ++++++++++++++++++++++++++  
+ +      +============+      = 
+ +      +            +      = 
+ +      +            +      = 
+ + ::   +            +   :: = 
+ +      +            +      = 
+ +      +============+      = 
+  ++++++++++++++++++++++++++  
+ ++++++++++++++++++++++++++++ 
+ +      +............+      + 
+ +  +   +            +  +.  + 
+ + +++  +            +  .   + 
+ +      +            +      + 
+ +      +            +      + 
+ +      ++++++++++++++ +    + 
+  ++++++++++++++++++++++++++  
+
+I suppose you'll figure out 
+what to do with it.
 
 ==============================
