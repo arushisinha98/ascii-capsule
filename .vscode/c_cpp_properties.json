@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "devkitARM",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "/opt/devkitpro/devkitARM/include",
+        "/opt/devkitpro/libnds/include",
+        "/opt/devkitpro/libfat-nds/include"
+      ],
+      "defines": [],
+      "compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+      "cStandard": "c99",
+      "cppStandard": "c++11",
+      "intelliSenseMode": "gcc-x64"
+    }
+  ],
+  "version": 4
+}

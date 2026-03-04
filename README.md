@@ -62,6 +62,14 @@ python asciify.py image.png --charset "*:.  "
 python asciify.py image.png --conceal "Hidden Message" --difficulty "hard"
 ```
 
+## Build and Deploy on DSi
+
+```bash
+# Install devkitPro, then:
+cd dsi && make          # produces ascii_memories.nds
+# Copy ascii_memories.nds to DSi SD card, launch via TWiLight Menu++
+```
+
 ## How It Works
 
 ### 1. Image Validation
