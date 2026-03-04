@@ -1,13 +1,27 @@
-# ASCII Memories — Content Manifest
-# Format: Display Name|Hidden Code|Art File|Letter File
-# Lines starting with # are comments.
+# ASCII Capsule — Content Manifest
 #
-# The hidden code is what's concealed in the ASCII art.
-# It is compared case-insensitively against user input.
+# Regular items: Display Name|HASH|art_file.txt|message_file.txt
+#   HASH = djb2-xor hash of the UPPERCASE hidden code.
+#   Use: python3 -c "
+#     h=5381
+#     for c in input('Code: ').upper(): h=((h<<5)+h)^ord(c); h&=0xFFFFFFFF
+#     print(h)"
 #
-HikingBoot|2SHOO|2SHOO.txt|2SHOO.txt
-Bread|BIGJO|BIGJO.txt|BIGJO.txt
-ChefHat|CHEFHTN|CHEFHTN.txt|CHEFHTN.txt
-Dumpling|DMPL93|DMPL93.txt|DMPL93.txt
-Pickle|PCKL57|PCKL57.txt|PCKL57.txt
-Tent|TNT404|TNT404.txt|TNT404.txt
+# Bonus codes (free entry): +HASH|message_file.txt
+#   These codes are hidden in the physical world, not in art.
+#
+Bread|4236073098|Bread.txt|Bread.txt
+Chef|2829293631|Chef.txt|Chef.txt
+Dumpling|2044844239|Dumpling.txt|Dumpling.txt
+Penguin|3830103426|Penguin.txt|Penguin.txt
+Pickle|4122514671|Pickle.txt|Pickle.txt
+Tent|941826462|Tent.txt|Tent.txt
+#
+# Bonus codes (for Free Entry)
++114642636|One.txt
++3668473084|Two.txt
++2088773309|Three.txt
++2088789717|Four.txt
++2620527374|Five.txt
++2921237495|Six.txt
++2117132143|Seven.txt

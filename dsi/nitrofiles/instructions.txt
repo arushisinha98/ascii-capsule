@@ -14,7 +14,8 @@ Use the asciify.py tool on
 your computer:
 
   python asciify.py IMAGE.png
-    --size 80
+    --size 60
+    --charset "@%#*+=-:. "
     --conceal "YOUR CODE"
     --difficulty "hard"
     --save-txt NAME.txt
@@ -25,15 +26,17 @@ embedded in the art.
 
 Parameters:
   --size     : Width (8-80)
-  --conceal  : The code to hide
+  --charset  : Allowable 
+               characters,
+               dark to light
+               (optional)
+  --conceal  : Code to hide
   --difficulty:
     easy   = code is visible
     hard   = code blends in
-  --charset  : Allowable 
-               characters
 
 ------------------------------
-  Step 2: Write a Letter
+  Step 2: Write a Message
 ------------------------------
 
 Create a text file with your
@@ -43,32 +46,61 @@ experience on the DSi
 (no side-scrolling).
 
 ------------------------------
-  Step 3: Add to Manifest
+  Step 3: Compute Code Hash
+------------------------------
+
+Codes are stored as hashes so
+they can't be read from the
+ROM file. Run this to get the
+hash of your code:
+
+  python3 -c "
+    h=5381
+    for c in input('Code: ')\\
+      .upper():
+      h=((h<<5)+h)^ord(c)
+      h &= 0xFFFFFFFF
+    print(h)"
+
+Type your code when prompted.
+It will print a number — that
+is the hash to put in the
+manifest.
+
+------------------------------
+  Step 4: Add to Manifest
 ------------------------------
 
 Edit nitrofiles/manifest.txt
 and add a new line:
 
-  Name|CODE|art.txt|msg.txt
+  Name|HASH|art.txt|msg.txt
 
 Fields (pipe-separated):
   1. Display name (shown in
      menu)
-  2. Hidden code (what user
-     must find and enter)
+  2. Hash of hidden code
+     (from Step 3)
   3. Art filename (in art/)
-  4. Message filename (in
-     letters/)
+  4. Message filename
+     (in messages/)
+
+To add a bonus code (no art,
+entered via "Free Entry"):
+
+  +HASH|msg.txt
 
 ------------------------------
-  Step 4: Copy Files
+  Step 5: Copy Files
 ------------------------------
 
 Copy your files into the
-nitrofiles directory.
+nitrofiles directory:
+  - Art files go in art/
+  - Messages go in messages/
 
 ------------------------------
-  Step 5: Rebuild
+  Step 6: Rebuild
 ------------------------------
 
 On your computer, run:
@@ -77,16 +109,16 @@ On your computer, run:
   make clean
   make
 
-This produces a new .nds file
+This produces asciicapsule.nds
 with your content embedded.
 
 ------------------------------
-  Step 6: Deploy
+  Step 7: Deploy
 ------------------------------
 
-Copy the new ascii_memories.nds
-to your DSi SD card. Launch
-it from TWiLight Menu++.
+Copy asciicapsule.nds to your
+DSi SD card. Launch it from
+TWiLight Menu++.
 
 ==============================
          Tips
@@ -96,9 +128,10 @@ it from TWiLight Menu++.
   (user can type upper or
   lower case)
 
-- Maximum 16 items supported
-  (edit MAX_ITEMS in
-  content.h to increase)
+- Max 16 art items and 16
+  bonus codes supported
+  (edit MAX_ITEMS / MAX_BONUS
+  in content.h to increase)
 
 - Art at 80 chars wide will
   require horizontal
@@ -109,5 +142,8 @@ it from TWiLight Menu++.
 - Test with melonDS or
   DeSmuME emulator before
   deploying to hardware.
+
+- Progress is saved on SD
+  as ascii_capsule_save.txt
 
 ==============================
