@@ -197,9 +197,9 @@ static void tick_splash(u16 kdown) {
     if (bot_dirty) {
         consoleSelect(&bot_con);
         iprintf("\x1b[8;3H======================");
-        iprintf("\x1b[10;5HASCII  CAPSULE");
-        iprintf("\x1b[12;3H======================");
-        iprintf("\x1b[16;8HLoading...");
+        iprintf("\x1b[10;5H   ASCII  CAPSULE");
+        iprintf("\x1b[12;3H=====================");
+        iprintf("\x1b[16;8H\nLoading...");
         iprintf("\x1b[20;4HPress A to skip");
         bot_dirty = false;
     }
@@ -220,12 +220,10 @@ static void tick_welcome(u16 kdown, u16 krepeat) {
 
     if (bot_dirty) {
         consoleSelect(&bot_con);
-        iprintf("\x1b[0;3H=== Welcome! ===");
-        iprintf("\x1b[2;0HRead the letter above.");
-        iprintf("\x1b[4;0HControls:");
-        iprintf("\x1b[5;0H  D-Pad : Scroll");
-        iprintf("\x1b[6;0H  L / R : Page up/down");
-        iprintf("\x1b[22;0HPRESS START to continue");
+        iprintf("\x1b[19;0HControls:");
+        iprintf("\x1b[20;0H  D-Pad : Scroll");
+        iprintf("\x1b[21;0H  L / R : Page up/down");
+        iprintf("\x1b[22;0HPress START to continue");
         bot_dirty = false;
     }
 
@@ -243,11 +241,10 @@ static void draw_menu(void) {
     consoleSelect(&top_con);
     consoleClear();
     iprintf("\x1b[0;2H=== ASCII Capsule ===\n\n");
-    iprintf("  Select an item to view\n");
-    iprintf("  its ASCII art and find\n");
-    iprintf("  the hidden code!\n\n");
+    iprintf("  Pick an item. Find the code.\n");
+    iprintf("  Type it in. Unlock something.\n\n");
 
-    /* Total menu entries = regular items + 1 (Free Entry) */
+    /* Total menu entries = regular items + 1 (BONUS) */
     int total = content.count + 1;
 
     for (int i = 0; i < total && i < 14; i++) {
@@ -261,8 +258,8 @@ static void draw_menu(void) {
             if (content.items[i].unlocked)
                 iprintf(" [*]");
         } else {
-            /* Free Entry slot */
-            iprintf("%-16s", "Free Entry");
+            /* BONUS slot */
+            iprintf("%-16s", "BONUS");
             /* Show [*] if any bonus is unlocked */
             int any = 0;
             for (int b = 0; b < content.bonus_count; b++)
@@ -276,12 +273,11 @@ static void draw_menu(void) {
     /* Bottom screen: controls */
     consoleSelect(&bot_con);
     consoleClear();
+    
     iprintf("\x1b[0;2HControls:");
-    iprintf("\x1b[2;0H  Up/Down : Navigate");
-    iprintf("\x1b[3;0H  A       : View art / enter");
-    iprintf("\x1b[4;0H  X       : Read message");
-    iprintf("\x1b[5;0H            (if unlocked)");
-    iprintf("\x1b[6;0H  SELECT  : Instructions");
+    iprintf("\x1b[2;0H  A  : View / enter");
+    iprintf("\x1b[3;0H  X  : Read message");
+    iprintf("\x1b[4;0H       (if unlocked)");
 
     if (menu_cursor >= 0 && menu_cursor < content.count) {
         iprintf("\x1b[9;0H  Item: %s", content.items[menu_cursor].name);
@@ -290,14 +286,12 @@ static void draw_menu(void) {
         else
             iprintf("\x1b[10;0H  Status: LOCKED");
     } else if (menu_cursor == content.count) {
-        iprintf("\x1b[9;0H  Item: Free Entry");
+        iprintf("\x1b[9;0H  Item: BONUS");
         int unlocked_bonus = 0;
         for (int b = 0; b < content.bonus_count; b++)
             if (content.bonus[b].unlocked) unlocked_bonus++;
-        iprintf("\x1b[10;0H  Bonus: %d / %d",
+        iprintf("\x1b[10;0H  Found: %d / %d",
                 unlocked_bonus, content.bonus_count);
-        iprintf("\x1b[12;0H  Enter codes found in");
-        iprintf("\x1b[13;0H  the real world!");
     }
 
     /* Unlock count */
@@ -307,14 +301,14 @@ static void draw_menu(void) {
     int bonus_unlocked = 0;
     for (int b = 0; b < content.bonus_count; b++)
         if (content.bonus[b].unlocked) bonus_unlocked++;
-    iprintf("\x1b[16;0H  Art: %d / %d", unlocked, content.count);
+    iprintf("\x1b[16;0H  Items: %d / %d", unlocked, content.count);
     iprintf("\x1b[17;0H  Bonus: %d / %d",
             bonus_unlocked, content.bonus_count);
 }
 
 static void tick_menu(u16 kdown) {
     bool need_draw = bot_dirty;
-    int total = content.count + 1;  /* +1 for Free Entry */
+    int total = content.count + 1;  /* +1 for BONUS */
 
     if (kdown & KEY_UP) {
         menu_cursor--;
@@ -339,7 +333,7 @@ static void tick_menu(u16 kdown) {
             free_entry_mode = false;
             enter_state(STATE_CHALLENGE);
         } else {
-            /* Free Entry → go directly to code entry */
+            /* BONUS → go directly to code entry */
             enter_state(STATE_FREE_ENTRY);
         }
     }
@@ -368,17 +362,13 @@ static void tick_challenge(u16 kdown, u16 krepeat) {
 
     if (bot_dirty) {
         consoleSelect(&bot_con);
-        iprintf("\x1b[0;1H- Find the Hidden Code -");
-        iprintf("\x1b[2;0HScroll the ASCII art on");
-        iprintf("\x1b[3;0Hthe top screen to find");
-        iprintf("\x1b[4;0Htext hidden in the art.");
-        iprintf("\x1b[6;0HControls:");
-        iprintf("\x1b[7;0H  D-Pad : Scroll");
-        iprintf("\x1b[8;0H  L / R : Page up/down");
-        iprintf("\x1b[11;0HItem: %s",
+        iprintf("\x1b[0;1H\n\nItem: %s",
                 content.items[selected_item].name);
-        iprintf("\x1b[21;0H  A : Enter code");
-        iprintf("\x1b[22;0H  B : Back to menu");
+        iprintf("\x1b[18;0HControls:");
+        iprintf("\x1b[19;0H  D-Pad : Scroll");
+        iprintf("\x1b[20;0H  L / R : Page up / down");
+        iprintf("\x1b[21;0H      A : Enter code");
+        iprintf("\x1b[22;0H      B : Back to menu");
         bot_dirty = false;
     }
 
@@ -436,16 +426,12 @@ static void tick_wrong_code(u16 kdown) {
 
     if (bot_dirty) {
         consoleSelect(&bot_con);
-        iprintf("\x1b[6;4H=== Wrong Code! ===");
-        iprintf("\x1b[9;2HYou entered:");
-        iprintf("\x1b[10;4H\"%s\"", keyboard_get_input(&kbd));
-        iprintf("\x1b[12;2HThat's not it.");
-        iprintf("\x1b[13;2HLook more carefully!");
-        iprintf("\x1b[17;2H  A : Try again");
+        iprintf("\x1b[6;4HNo");
+        iprintf("\x1b[15;2H  A : Try again");
         if (free_entry_mode)
             iprintf("\x1b[18;2H  B : Back to menu");
         else
-            iprintf("\x1b[18;2H  B : Back to art");
+            iprintf("\x1b[18;2H  B : Back");
         bot_dirty = false;
     }
 
@@ -473,18 +459,17 @@ static void tick_message(u16 kdown, u16 krepeat) {
 
     if (bot_dirty) {
         consoleSelect(&bot_con);
-        iprintf("\x1b[0;2H** Message Unlocked! **");
+        iprintf("\x1b[0;2H\n** Message Unlocked! **");
         if (free_entry_mode) {
-            iprintf("\x1b[2;0HBonus code accepted!");
+            iprintf("\x1b[2;0H\nBonus code accepted!");
         } else {
-            iprintf("\x1b[2;0HItem: %s",
+            iprintf("\x1b[2;0H\nItem: %s",
                     content.items[selected_item].name);
         }
-        iprintf("\x1b[4;0HRead the message above.");
-        iprintf("\x1b[6;0HControls:");
-        iprintf("\x1b[7;0H  D-Pad : Scroll");
-        iprintf("\x1b[8;0H  L / R : Page up/down");
-        iprintf("\x1b[22;0H  B : Back to menu");
+        iprintf("\x1b[19;0HControls:");
+        iprintf("\x1b[20;0H  D-Pad : Scroll");
+        iprintf("\x1b[21;0H  L / R : Page up / down");
+        iprintf("\x1b[22;0H      B : Back to menu");
         bot_dirty = false;
     }
 
@@ -495,26 +480,21 @@ static void tick_message(u16 kdown, u16 krepeat) {
 }
 
 /* ================================================================== */
-/* State: FREE_ENTRY                                                   */
+/* State: BONUS                                                 */
 /* ================================================================== */
 
 static void tick_free_entry(u16 kdown) {
     if (top_dirty) {
         consoleSelect(&top_con);
         consoleClear();
-        iprintf("\x1b[2;3H=== Free Entry ===");
-        iprintf("\x1b[5;0H  Enter a bonus code you");
-        iprintf("\x1b[6;0H  found in the real world.");
-        iprintf("\x1b[8;0H  These codes are NOT in");
-        iprintf("\x1b[9;0H  the ASCII art -- look");
-        iprintf("\x1b[10;0H around you!");
-        iprintf("\x1b[13;0H Bonus messages: %d / %d",
-                0, content.bonus_count);
+        iprintf("\x1b[2;3H=== BONUS ===");
+        iprintf("\x1b[5;0H  Enter a bonus code.");
+        iprintf("\x1b[6;0H  There are no hints.");
 
         int unlocked_bonus = 0;
         for (int b = 0; b < content.bonus_count; b++)
             if (content.bonus[b].unlocked) unlocked_bonus++;
-        iprintf("\x1b[13;0H  Unlocked: %d / %d",
+        iprintf("\x1b[13;0H  Found: %d / %d",
                 unlocked_bonus, content.bonus_count);
 
         top_dirty = false;
@@ -554,14 +534,10 @@ static void tick_instructions(u16 kdown, u16 krepeat) {
 
     if (bot_dirty) {
         consoleSelect(&bot_con);
-        iprintf("\x1b[0;2H--- How to Extend ---");
-        iprintf("\x1b[2;0HRead the instructions");
-        iprintf("\x1b[3;0Habove to add your own");
-        iprintf("\x1b[4;0HASCII art and memories!");
-        iprintf("\x1b[6;0HControls:");
-        iprintf("\x1b[7;0H  D-Pad : Scroll");
-        iprintf("\x1b[8;0H  L / R : Page up/down");
-        iprintf("\x1b[22;0H  B : Back to menu");
+        iprintf("\x1b[19;0HControls:");
+        iprintf("\x1b[20;0H  D-Pad : Scroll");
+        iprintf("\x1b[21;0H  L / R : Page up / down");
+        iprintf("\x1b[22;0H      B : Back to menu");
         bot_dirty = false;
     }
 

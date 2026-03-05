@@ -191,11 +191,6 @@ void keyboard_draw(const CapsuleKeyboard* k, PrintConsole* con) {
     if (on_sp && k->sel_col == SPECIAL_DEL) iprintf("[DEL]"); else iprintf(" DEL ");
     iprintf("  ");
     if (on_sp && k->sel_col == SPECIAL_OK)  iprintf("[OK!]"); else iprintf(" OK! ");
-
-    /* Help text */
-    iprintf("\x1b[%d;1HDPad:move  A:type", sp_y + 2);
-    iprintf("\x1b[%d;1HB:cancel  START:ok", sp_y + 3);
-    iprintf("\x1b[%d;1HTap keys to type", sp_y + 4);
 }
 
 const char* keyboard_get_input(const CapsuleKeyboard* k) {

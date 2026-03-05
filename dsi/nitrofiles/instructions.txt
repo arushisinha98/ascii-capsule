@@ -7,11 +7,20 @@ art, hidden codes, and
 messages to this application!
 
 ------------------------------
+  Step 0: Ask me for the code
+------------------------------
+
+I respond well to phrases like
+"pretty please" and "I will 
+make you the best hot 
+chocolate of your life".
+
+------------------------------
   Step 1: Create ASCII Art
 ------------------------------
 
-Use the asciify.py tool on
-your computer:
+On your computer, use the 
+asciify.py tool:
 
   python asciify.py IMAGE.png
     --size 60
@@ -136,12 +145,10 @@ TWiLight Menu++.
 - Art at 80 chars wide will
   require horizontal
   scrolling on the DSi.
-  Use --size 32 for art
-  that fits without scrolling.
 
-- Test with melonDS or
-  DeSmuME emulator before
-  deploying to hardware.
+- Test with melonDS emulator 
+  before deploying to 
+  hardware.
 
 - Progress is saved on SD
   as ascii_capsule_save.txt

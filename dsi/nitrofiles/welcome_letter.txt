@@ -32,7 +32,7 @@ Type it in. Unlock something.
 If you are astute (and if I 
 did this right) my unfiltered 
 4AM thoughts will be waiting 
-for you back on the menu.
+for you.
 
 ==============================
            Controls
@@ -46,7 +46,7 @@ for you back on the menu.
  X       : Read the message
            (from menu)
  START   : Confirm / begin
- SELECT  : Instructions
+ SELECT  : Extension
 
 ==============================
 
@@ -70,7 +70,6 @@ logo.
  =      =------------= =    = 
   ==========================  
 
-I suppose you'll figure out 
-what to do with it.
+It is part of this thing.
 
 ==============================

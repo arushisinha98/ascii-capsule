@@ -230,7 +230,7 @@ dsi/
 5. **Software scrolling**: Redraws visible window on scroll
 6. **D-pad + touch keyboard**: Full alphanumeric input
 7. **Hashed codes**: Codes stored as djb2-xor hashes
-8. **Free Entry**: Bonus codes hidden in the real world
+8. **Free Entry**: Bonus codes hidden in the physical world
 
 ---
 
