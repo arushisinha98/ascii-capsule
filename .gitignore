@@ -213,3 +213,5 @@ __marimo__/
 # Specific files and directories
 .secrets
 *.egg-info/*
+*.elf
+*.nds
