@@ -1,4 +1,4 @@
-name: Run Pytest
+name: Run Test
 
 on:
   push:
@@ -12,6 +12,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pixi
+        run: |
+          curl -fsSL https://pixi.sh/install.sh | bash
+          export PATH="$HOME/.pixi/bin:$PATH"
+          pixi --version
+
+      - name: Set up pixi environment
+        run: |
+          export PATH="$HOME/.pixi/bin:$PATH"
+          pixi install
+        
+      - name: Install package
+        run: |
+          export PATH="$HOME/.pixi/bin:$PATH"
+          pixi run pip install -e .
+        
+      - name: Run pytest
+        run: |
+          export PATH="$HOME/.pixi/bin:$PATH"
+          pixi run pytest -v .
 
       - name: Install build tools
         run: sudo apt-get update && sudo apt-get install -y build-essential
