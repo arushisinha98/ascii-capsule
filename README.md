@@ -245,7 +245,6 @@ dsi/
    export DEVKITARM=$DEVKITPRO/devkitARM
    export PATH=$DEVKITPRO/tools/bin:$DEVKITARM/bin:$PATH
    ```
-3. **VSCode C/C++ config**: Add devkitPro include paths to `.vscode/c_cpp_properties.json`.
 
 ### Building
 
