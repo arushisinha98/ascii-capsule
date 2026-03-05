@@ -37,6 +37,7 @@ jobs:
       - name: Run pytest
         run: |
           export PATH="$HOME/.pixi/bin:$PATH"
+          export PYTHONPATH=src
           pixi run pytest -v .
 
       - name: Install build tools

@@ -62,6 +62,13 @@ python asciify.py image.png --charset "*:.  "
 python asciify.py image.png --conceal "Hidden Message" --difficulty "hard"
 ```
 
+## Run Tests Locally
+
+```bash
+export PYTHONPATH=src
+pixi run pytest -v .
+```
+
 ## Build and Deploy on DSi
 
 ```bash
