@@ -1,118 +1,85 @@
-
-# ascii-capsule
-
-ascii-capsule is a dual-component project:
-
-1. **Asciify** — a Python command-line tool to convert images into ASCII art, with advanced features and output options.
-2. **ASCII Capsule** — a Nintendo DSi homebrew application for viewing and unlocking ASCII art challenges, designed for the DSi's hardware constraints.
+<div align="center">
+   <h1>ascii-capsule</h1>
+   <p><b>Turn images into ASCII art. Conceal codes to unlock messages on your Nintendo DSi!</b></p>
+   <p>
+      <img src="https://img.shields.io/badge/python-3.7%2B-blue" alt="Python 3.7+">
+      <img src="https://img.shields.io/github/actions/workflow/status/arushisinha98/ascii-capsule/.github%2Fworkflows%2Ftest.yml" alt="Build Status">
+   </p>
+</div>
 
 ---
 
-# 1. Asciify — ASCII Art Image Converter (Python CLI)
+<details open>
+<summary><b>Table of Contents</b></summary>
 
-A command-line tool to convert images into ASCII art with multiple output format options.
+- [About](#about)
+- [Features](#features)
+- [Getting Started](#getting-started)
+   - [Installation](#installation)
+   - [Usage](#usage)
+   - [Testing](#testing)
+- [Architecture](#architecture)
+- [Performance](#performance)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
+</details>
+
+---
+
+## About
+
+**ascii-capsule** is a dual-component project:
+
+- **Asciify**: Python CLI tool to convert images into ASCII art, with advanced features and output options.
+- **ASCII Capsule**: Nintendo DSi homebrew app for viewing and unlocking ASCII art challenges, designed for the DSi's hardware constraints.
+
+---
 
 ## Features
 
-- **Multiple Format Support**: JPEG, PNG, WEBP, TIFF
+#### ASCII Image Creation
+
+- **Multiple Format Support to Asciify**: JPEG, PNG, WEBP, TIFF
 - **Adjustable Size**: Control output width (8-80 characters)
-- **Multiple Output Formats**: Display in terminal, save as text, or save as HTML
-- **Character Density Mapping**: Uses visual density to create representations
+- **Multiple Output Formats**: Terminal, text, or HTML
+- **Character Density Mapping**: Visual density for realistic ASCII
 - **Text Concealing**: Hide messages in the art with adjustable difficulty
 
-## Installation
+#### DSi Design Decisions
 
-### Requirements
+1. **C over C++**: Simpler, smaller binary
+2. **NitroFS for content**: All data embedded in .nds
+3. **FAT for save data**: Progress saved to SD card
+4. **Console text mode**: Uses libnds PrintConsole
+5. **Software scrolling**: Redraws visible window on scroll
+6. **D-pad + touch keyboard**: Full alphanumeric input
+7. **Hashed codes**: Codes stored as djb2-xor hashes
+8. **Free Entry**: Bonus codes hidden in the physical world
+
+---
+
+## Getting Started
+
+### Installation
+
+**Requirements:**
 
 - Python 3.7+
 - pip
 
-### Setup
+**Setup:**
 
 ```bash
-# Install dependencies
 pixi install
 ```
 
-## Usage
+---
 
-### Basic Usage
+### Usage
 
-```bash
-# Convert image and display in terminal (default 80 characters wide)
-python asciify.py PATH-TO-IMAGE.png
-
-# Specify custom size
-python asciify.py PATH-TO-IMAGE.png --size 50
-# Size is clamped between 8 and 80
-```
-
-### Saving Output
-
-```bash
-# Save as text file
-python asciify.py PATH-TO-IMAGE.png --save-txt PATH-TO-OUTPUT.txt
-
-# Save as HTML file
-python asciify.py PATH-TO-IMAGE.png --save-html PATH-TO-OUTPUT.html
-# Save directory will be created if it doesn't already exist
-
-# Combine size and save options
-python asciify.py PATH-TO-IMAGE.jpg --size 60 --save-html PATH-TO-OUTPUT.html
-```
-
-### Advanced Options
-
-```bash
-# Specify your own character set
-python asciify.py image.png --charset "*:.  "
-
-# Hide a message (defaults to hard)
-python asciify.py image.png --conceal "Hidden Message" --difficulty "hard"
-```
-
-## Run Tests Locally
-
-```bash
-export PYTHONPATH=src
-pixi run pytest -v .
-```
-
-## How It Works
-
-1. **Image Validation**: Checks that the image has a supported extension (JPEG/JPG, PNG, WEBP, TIFF/TIF).
-2. **Size Clamping**: Ensures the output size is between 8 and 80 characters wide (default: 80).
-3. **Image Loading**: Reads the image using PIL/Pillow library.
-4. **Dimension Calculation**: Maintains aspect ratio, compensating for ASCII character proportions (~2:1).
-5. **Image Resizing**: Uses high-quality LANCZOS resampling.
-6. **Grayscale Conversion**: For brightness-based character mapping.
-7. **ASCII Art Generation**: Maps pixel brightness to ASCII characters:
-   - Darker pixels → denser characters (e.g., @, #, %)
-   - Lighter pixels → lighter characters (e.g., ., :, space)
-8. **Text Concealing**: Hides messages in the art, with difficulty based on density.
-9. **Output**: Displays or saves the ASCII art.
-
-## Character Set
-
-```
-@%#*+=-:. 
-```
-Characters are ordered from darkest (most dense) to lightest (least dense).
-
-## Output Formats
-
-- **Terminal Display**: Prints ASCII art to the console.
-- **Text File (.txt)**: Saves as plain text.
-- **HTML File (.html)**: Monospace font, black background, green text, responsive layout.
-
-## Architecture
-
-- `src/ascii_converter.py`: Core conversion logic (`ASCIIConverter` class)
-- `src/ascii_output.py`: Output handling (`ASCIIOutputHandler` class)
-- `src/text_concealer.py`: Text concealing logic (`conceal` function)
-- `asciify.py`: CLI interface
-
-## Example
+#### Example
 
 ```
 Original Image (landscape.jpg)     ASCII Art (--size 40)
@@ -127,66 +94,122 @@ Original Image (landscape.jpg)     ASCII Art (--size 40)
                                        ..=*+:  . .*=. .. ...*#. .+#+...        
 ```
 
-## Troubleshooting
+#### Basic Usage
 
-- **"Unsupported image format"**: Use JPEG, PNG, WEBP, or TIFF.
-- **"Image file not found"**: Check the file path.
-- **Characters don't align**: Use a monospace font.
+```bash
+# Convert image and display in terminal (default 80 characters wide)
+python asciify.py PATH-TO-IMAGE.png
 
-## Performance
+# Specify custom size
+python asciify.py PATH-TO-IMAGE.png --size 50
+# Size is clamped between 8 and 80
+```
 
-- Small images (< 500KB): Near-instant
-- Medium (500KB - 5MB): < 1 second
-- Large (> 5MB): 1-3 seconds
+#### Saving Output
+
+```bash
+# Save as text file
+python asciify.py PATH-TO-IMAGE.png --save-txt PATH-TO-OUTPUT.txt
+
+# Save as HTML file
+python asciify.py PATH-TO-IMAGE.png --save-html PATH-TO-OUTPUT.html
+# Save directory will be created if it doesn't already exist
+
+# Combine size and save options
+python asciify.py PATH-TO-IMAGE.jpg --size 60 --save-html PATH-TO-OUTPUT.html
+```
+
+#### Advanced Options
+
+```bash
+# Specify your own character set
+python asciify.py image.png --charset "*: .  "
+
+# Hide a message (defaults to hard)
+python asciify.py image.png --conceal "Hidden Message" --difficulty "hard"
+```
+
+#### DSi App Prerequisites
+
+1. <b>Install devkitPro</b> (devkitARM toolchain + libnds)
+2. <b>Set environment variables</b>:
+    ```bash
+    export DEVKITPRO=/opt/devkitpro
+    export DEVKITARM=$DEVKITPRO/devkitARM
+    export PATH=$DEVKITPRO/tools/bin:$DEVKITARM/bin:$PATH
+    ```
+3. <b>Build</b>
+   ```bash
+   cd dsi
+   make clean # clean
+   make
+   ```
+   Produces `asciicapsule.nds` (the complete ROM).
+4. <b>Load onto Nintendo DSi</b>
+   - Build the app: `make` in `dsi/` → `asciicapsule.nds`
+   - Copy to SD card: Place `.nds` file on SD card
+   - Insert SD card into DSi
+   - Launch TWiLight Menu++
+   - Navigate and launch the app
+   Progress is saved to `ascii_capsule_save.txt` on the SD card root.
 
 ---
 
-# 2. ASCII Capsule — Nintendo DSi Application
+### Testing
 
-ASCII Capsule is a homebrew application for the Nintendo DSi, designed to present ASCII art challenges and messages, with unlockable content and a custom UI tailored for the DSi's hardware.
+#### Host-Side Tests
 
-## DSi Hardware Constraints
+```bash
+export PYTHONPATH=src
+pixi run pytest -v .
+```
 
-| Spec         | Value                                 |
-|--------------|---------------------------------------|
-| Screens      | 2 × TFT-LCD, 256×192 pixels each      |
-| Console text | 32 columns × 24 rows per screen (8×8) |
-| CPU          | ARM9 @ 133 MHz + ARM7 @ 33 MHz        |
-| RAM          | 16 MB                                 |
-| Storage      | SD card (up to 32 GB) + 256 MB flash  |
-| Input        | D-pad, A/B/X/Y, L/R, touch            |
-| Audio        | AAC, speakers/headphone               |
+```bash
+cd dsi/tests
+make test
+```
+Runs 34 tests for content, code matching, viewer, save/load, etc.
 
-### Screen Size vs. ASCII Art Width
+#### On-Device Testing
 
-ASCII art is 60 characters wide by default, but the DSi displays 32 characters per line. The app implements horizontal/vertical/page scrolling for navigation.
+Use the melonDS emulator:
+```bash
+melonDS dsi/asciicapsule.nds
+```
 
 ---
 
-## Application Architecture
+## Architecture
 
-### State Machine
+#### ASCII Image Creation
+
+- `src/ascii_converter.py`: Core conversion logic (`ASCIIConverter` class)
+- `src/ascii_output.py`: Output handling (`ASCIIOutputHandler` class)
+- `src/text_concealer.py`: Text concealing logic (`conceal` function)
+- `asciify.py`: CLI interface
+
+#### DSi State Machine
 
 ```
 SPLASH → WELCOME → MENU
-                    ↓
-              CHALLENGE → CODE_ENTRY
-                    ↓         ↓
-              WRONG_CODE   MESSAGE (unlocked)
-                    ↓         ↓
-                  (retry)    MENU
+                              ↓
+                     CHALLENGE → CODE_ENTRY
+                              ↓         ↓
+                     WRONG_CODE   MESSAGE (unlocked)
+                              ↓         ↓
+                           (retry)    MENU
 
-        MENU → FREE_ENTRY (bonus codes)
-                  ↓         ↓
-              WRONG_CODE   MESSAGE (unlocked)
-                  ↓         ↓
-                (retry)    MENU
+            MENU → FREE_ENTRY (bonus codes)
+                           ↓         ↓
+                     WRONG_CODE   MESSAGE (unlocked)
+                           ↓         ↓
+                        (retry)    MENU
 
-        MENU → INSTRUCTIONS
-        MENU → MESSAGE (if unlocked)
+            MENU → INSTRUCTIONS
+            MENU → MESSAGE (if unlocked)
 ```
 
-### Screen Layout
+#### Screen Layout
 
 | State         | Top Screen         | Bottom Screen                |
 |---------------|-------------------|------------------------------|
@@ -200,7 +223,7 @@ SPLASH → WELCOME → MENU
 | MESSAGE       | Message text      | Unlock confirmation          |
 | INSTRUCTIONS  | How-to guide      | Navigation help              |
 
-### Module Design
+#### Module Design
 
 ```
 dsi/
@@ -221,80 +244,7 @@ dsi/
 └── tools/                   # Content prep scripts
 ```
 
-### Key Design Decisions
-
-1. **C over C++**: Simpler, smaller binary
-2. **NitroFS for content**: All data embedded in .nds
-3. **FAT for save data**: Progress saved to SD card
-4. **Console text mode**: Uses libnds PrintConsole
-5. **Software scrolling**: Redraws visible window on scroll
-6. **D-pad + touch keyboard**: Full alphanumeric input
-7. **Hashed codes**: Codes stored as djb2-xor hashes
-8. **Free Entry**: Bonus codes hidden in the physical world
-
----
-
-## Building the DSi App
-
-### Prerequisites
-
-1. **Install devkitPro** (devkitARM toolchain + libnds)
-2. **Set environment variables**:
-   ```bash
-   export DEVKITPRO=/opt/devkitpro
-   export DEVKITARM=$DEVKITPRO/devkitARM
-   export PATH=$DEVKITPRO/tools/bin:$DEVKITARM/bin:$PATH
-   ```
-
-### Building
-
-```bash
-cd dsi
-make
-```
-Produces `asciicapsule.nds` (the complete ROM).
-
-### Cleaning
-
-```bash
-cd dsi
-make clean
-```
-
----
-
-## Loading onto Nintendo DSi
-
-1. **Build the app**: `make` in `dsi/` → `asciicapsule.nds`
-2. **Copy to SD card**: Place `.nds` file on SD card
-3. **Insert SD card** into DSi
-4. **Launch TWiLight Menu++**
-5. **Navigate and launch** the app
-
-Progress is saved to `ascii_capsule_save.txt` on the SD card root.
-
----
-
-## Testing
-
-### Host-Side Tests
-
-```bash
-cd dsi/tests
-make test
-```
-Runs 34 tests for content, code matching, viewer, save/load, etc.
-
-### On-Device Testing
-
-Use the melonDS emulator:
-```bash
-melonDS dsi/asciicapsule.nds
-```
-
----
-
-## Content Manifest Format
+#### Content Manifest Format
 
 Regular items:
 ```
@@ -313,15 +263,45 @@ print(h)
 
 ---
 
+## Performance
+
+#### DSi Hardware Constraints
+
+| Spec         | Value                                 |
+|--------------|---------------------------------------|
+| Screens      | 2 × TFT-LCD, 256×192 pixels each      |
+| Console text | 32 columns × 24 rows per screen (8×8) |
+| CPU          | ARM9 @ 133 MHz + ARM7 @ 33 MHz        |
+| RAM          | 16 MB                                 |
+| Storage      | SD card (up to 32 GB) + 256 MB flash  |
+| Input        | D-pad, A/B/X/Y, L/R, touch            |
+| Audio        | AAC, speakers/headphone               |
+
+#### Troubleshooting
+
+- **"Unsupported image format"**: Use JPEG, PNG, WEBP, or TIFF.
+- **"Image file not found"**: Check the file path.
+- **"Characters don't align"**: Use a monospace font.
+
+ASCII art is 60 characters wide by default, but the DSi displays 32 characters per line. The app implements horizontal/vertical/page scrolling for navigation.
+
+---
+
+## Contributing
+
+Contributions are welcome! Please open issues or pull requests for:
+- Batch processing multiple images
+- More output formats (SVG, PDF)
+- Enhanced DSi app features
+- Any other ideas!
+
+---
+
 ## License
 
 This project is provided as-is for educational and personal use.
 
-## Contributing
-
-Contributions are welcome! Areas for improvement:
-- Batch processing multiple images
-- More interesting features
+---
 
 ## Acknowledgments
 
