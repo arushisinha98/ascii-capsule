@@ -7,7 +7,7 @@ name = "ascii-capsule"
 version = "0.1.0"
 description = "A package for ASCII art and text concealment, turned into a DSi game that may not work."
 authors = [
-    { name = "Arushi Sinha", email = "arushisinha98+github@gmail.com" }
+    { name = "Arushi Sinha", email = "115908316+arushisinha98@users.noreply.github.com>" }
 ]
 readme = "README.md"
 requires-python = ">=3.8"
