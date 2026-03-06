@@ -1,10 +1,9 @@
 <div align="center">
    <h1>ascii-capsule</h1>
-   <p><b>Turn images into ASCII art & unlock ASCII challenges on the Nintendo DSi!</b></p>
+   <p><b>Turn images into ASCII art. Conceal codes to unlock messages on your Nintendo DSi!</b></p>
    <p>
       <img src="https://img.shields.io/badge/python-3.7%2B-blue" alt="Python 3.7+">
-      <img src="https://img.shields.io/badge/license-Educational%20Use-lightgrey" alt="License">
-      <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome">
+      <img src="https://img.shields.io/github/actions/workflow/status/arushisinha98/ascii-capsule/.github%2Fworkflows%2Ftest.yml" alt="Build Status">
    </p>
 </div>
 
