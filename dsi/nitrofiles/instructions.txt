@@ -72,9 +72,7 @@ hash of your code:
     print(h)"
 
 Type your code when prompted.
-It will print a number — that
-is the hash to put in the
-manifest.
+It will print a number.
 
 ------------------------------
   Step 4: Add to Manifest
