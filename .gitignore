@@ -217,3 +217,5 @@ __marimo__/
 *.egg-info/*
 *.elf
 *.nds
+
+.vscode/settings.json
