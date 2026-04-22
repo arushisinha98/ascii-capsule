@@ -27,7 +27,7 @@ class ASCIIConverter:
     
     def __init__(self, charset: str = None):
         """
-        Initialize the converter with character set choice.
+        Initialise the converter with character set choice.
         
         Args:
             charset: Character set string to use (None for default)
@@ -126,7 +126,7 @@ class ASCIIConverter:
         # Convert image to numpy array for efficient processing
         pixels = np.array(img)
         
-        # Normalize pixel values to character index range
+        # Normalise pixel values to character index range
         # 0 (black) maps to densest char, 255 (white) maps to lightest char
         char_indices = ((pixels / 255) * (len(self.chars) - 1)).astype(int)
         

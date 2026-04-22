@@ -101,7 +101,7 @@ def main():
     args = parse_arguments()
     
     try:
-        # Initialize converter
+        # Initialise converter
         converter = ASCIIConverter(charset=args.charset.replace('"\'', '') if args.charset else None)
         
         # Convert image to ASCII art
@@ -111,7 +111,7 @@ def main():
         if args.conceal:
             ascii_art = conceal(ascii_art, args.conceal.replace('"\'', ''), difficulty=args.difficulty)
         
-        # Initialize output handler
+        # Initialise output handler
         output_handler = ASCIIOutputHandler()
         saved_files = []
         
