@@ -219,3 +219,4 @@ __marimo__/
 *.nds
 
 .vscode/settings.json
+out
