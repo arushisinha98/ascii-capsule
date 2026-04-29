@@ -69,7 +69,7 @@ class ASCIIOutputHandler:
                 else:
                     out.append(c)
             return ''.join(out)
-        html_lines = [colorize_line(line) for line in ascii_art.split('\n')]
+        html_lines = '\n'.join([colorize_line(line) for line in ascii_art.split('\n')])
         html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,7 +103,7 @@ class ASCIIOutputHandler:
 </head>
 <body>
     <div class="container">
-        <pre>{'\n'.join(html_lines)}</pre>
+        <pre>{html_lines}</pre>
     </div>
 </body>
 </html>"""
